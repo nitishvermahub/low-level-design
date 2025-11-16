@@ -36,24 +36,32 @@ public class RateLimiterFactory {
         return instance;
     }
     
-
-    public RateLimiter createRateLimiter(RateLimiterType type, int maxRequests, int timeWindowInSeconds) {
+    /**
+     * Creates a rate limiter of the specified type.
+     * 
+     * Parameter semantics vary by type:
+     * - FIXED_WINDOW: param1 = maxRequests, param2 = windowSizeInSeconds
+     * - SLIDING_WINDOW_LOG: param1 = maxRequests, param2 = windowSizeInSeconds
+     * - TOKEN_BUCKET: param1 = maxTokens (capacity), param2 = refillRate (tokens per second)
+     * - LEAKY_BUCKET: param1 = capacity, param2 = leakRate (requests per second)
+     */
+    public RateLimiter createRateLimiter(RateLimiterType type, int param1, int param2) {
         if (type == null) {
             throw new IllegalArgumentException("Rate limiter type cannot be null");
         }
         
         switch (type) {
             case FIXED_WINDOW:
-                return new FixedWindowCounterRateLimiter(maxRequests, timeWindowInSeconds);
+                return new FixedWindowCounterRateLimiter(param1, param2);
                 
             case SLIDING_WINDOW_LOG:
-                return new SlidingWindowLogRateLimiter(maxRequests, timeWindowInSeconds);
+                return new SlidingWindowLogRateLimiter(param1, param2);
                 
             case TOKEN_BUCKET:
-                return new TokenBucketRateLimiter(maxRequests, timeWindowInSeconds);
+                return new TokenBucketRateLimiter(param1, param2);
                 
             case LEAKY_BUCKET:
-                return new LeakyBucketRateLimiter(maxRequests, timeWindowInSeconds);
+                return new LeakyBucketRateLimiter(param1, param2);
                 
             default:
                 throw new IllegalArgumentException("Unknown rate limiter type: " + type);
