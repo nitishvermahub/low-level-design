@@ -1,72 +1,162 @@
-# awesome-low-level-design
-This repository contains low level design (LLD) resources to improve object oriented design (OOD) skills and prepare for interviews.
+# Rate Limiter
 
-## Fundamental Concepts
-- [Basics of OOPS](concepts/OOPS.md)
-- [SOLID Principles in Pictures](https://medium.com/backticks-tildes/the-s-o-l-i-d-principles-in-pictures-b34ce2f1e898)
-- [SOLID Principles in Code](https://medium.com/android-news/solid-principles-the-definitive-guide-75e30a284dea)
-- [DRY Principle](concepts/DRY.md)
-- [YAGNI Principle](concepts/YAGNI.md)
-- [KISS Principle](concepts/KISS.md)
+## Overview
+A comprehensive implementation of various rate limiting algorithms in Java. Rate limiting is a technique used to control the rate of requests sent or received by a system, preventing abuse and ensuring fair resource allocation.
 
-## Design Patterns
-- [Refactoring Guru - Catalog of Design Patterns](https://refactoring.guru/design-patterns/catalog)
-- [Fireship - 10 Design Patterns in 10 Minutes](https://www.youtube.com/watch?v=tv-_1er1mWI&pp=ygUPZGVzaWduIHBhdHRlcm5z)
-- [Design Pattern Playlist](https://www.youtube.com/watch?v=v9ejT8FO-7I&list=PLrhzvIcii6GNjpARdnO4ueTUAVR9eMBpc)
-- [Github - Awesome Design Patterns](https://github.com/DovAmir/awesome-design-patterns)
+## Components
 
-## UML
-- [Derek Banas - UML Playlist](https://www.youtube.com/playlist?list=PLGLfVvz_LVvQ5G-LdJ8RLqe-ndo7QITYc)
-- [UML Class Diagram Tutorial](https://www.visual-paradigm.com/guide/uml-unified-modeling-language/uml-class-diagram-tutorial/)
-- [Relationships in UML](https://blog.visual-paradigm.com/what-are-the-six-types-of-relationships-in-uml-class-diagrams/)
+### 1. RateLimiter Interface
+The base interface that all rate limiting algorithms implement.
+- `allowRequest(String userId)`: Determines if a request from a user should be allowed
 
-## Low Level Design Interview Problems
-### Easy
-- [Design Parking Lot](problems/parking-lot.md)
-- [Design a Vending Machine](https://medium.com/swlh/vending-machine-design-a-state-design-pattern-approach-5b7e1a026cd2)
-- [Design Stack Overflow](problems/stack-overflow.md)
-- [Design Logging Framework](problems/logging-framework.md)
-- [Design Coffee Vending Machine](problems/coffee-vending-machine.md)
-- [Design Traffic Signal Control System](problems/traffic-signal.md)
-- [Design a Task Management System](problems/task-management-system.md)
-### Medium
-- [Design Pub Sub System](problems/pub-sub-system.md)
-- [Design Tic Tac Toe Game](problems/tic-tac-toe.md)
-- [Design Car Rental System](problems/car-rental-system.md)
-- [Design an ATM](problems/atm.md)
-- [Design Hotel Management System](problems/hotel-management-system.md)
-- [Design LinkedIn](problems/linkedin.md)
-- [Design a Social Network like Facebook](problems/facebook.md)
-- [Design an Elevator System](problems/elevator-system.md)
-- [Design a Library Management System](problems/library-management-system.md)
-- [Design Restaurant Management System](problems/restaurant-management-system.md)
-- [Design Airline Management System](problems/airline-management-system.md)
-- [Design a Digital Wallet System](problems/digital-wallet-system.md)
-- [Design an Online Auction System](problems/online-auction-system.md)
-- [Design a Vehicle Rental System:](problems/vehicle-rental-system.md)
-- [Design a Concert Ticket Booking System](problems/vehicle-rental-system.md)
-- [Design a Cache using LRU Eviction Policy](problems/lru-cache.md)
-### Hard
-- [Design Movie Ticket Booking System](https://www.youtube.com/watch?v=CC7DwkQOsS0&list=PLAC2AM9O1C5KioUMeH9qIjbAV_RMmX8rd&index=8)
-- [Design Splitwise](https://workat.tech/machine-coding/editorial/how-to-design-splitwise-machine-coding-ayvnfo1tfst6)
-- [Design a Snake and Ladder game](https://workat.tech/machine-coding/editorial/how-to-design-snake-and-ladder-machine-coding-ehskk9c40x2w)
-- [Design Online Shopping System like Amazon](problems/amazon.md)
-- [Design Online Stock Brokerage System](problems/online-stock-brokerage-system.md)
-- [Design CricInfo](https://www.youtube.com/watch?v=VDqwCo6lhkY&list=PLAC2AM9O1C5KioUMeH9qIjbAV_RMmX8rd&index=6)
-- [Design Chess Game](problems/chess-game.md)
-- [Design Ride-Sharing Service (like Uber)](problems/ride-sharing-service.md)
-- [Design Online Food Delivery Service (like Swiggy)](problems/food-delivery-service.md)
-- [Design Music Streaming Service (like Spotify)](problems/music-streaming-service.md)
-- [Design University Course Registration System](problems/course-registration-system.md)
+### 2. Rate Limiting Algorithms
 
-## Books
-- [Head First Design Patterns](https://www.amazon.com/Head-First-Design-Patterns-Object-Oriented/dp/149207800X/)
-- [Clean Code](https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/B08X8ZXT15)
-- [Refactoring: Improving the Design of Existing Code](https://www.amazon.com/Refactoring-Improving-Existing-Addison-Wesley-Signature/dp/0134757599/)
+#### Token Bucket Algorithm (`TokenBucketRateLimiter`)
+**How it works:**
+- Each user has a bucket with a maximum capacity of tokens
+- Tokens are added to the bucket at a fixed rate (refill rate)
+- Each request consumes one token
+- If no tokens are available, the request is denied
 
-## Courses
-- [Coursera - Object-Oriented Design](https://www.coursera.org/learn/object-oriented-design)
-- [Coursera - Design Patterns](https://www.coursera.org/learn/design-patterns)
+**Use cases:**
+- Handling bursty traffic while maintaining an average rate
+- API rate limiting with burst allowance
 
-## Additional Resources
-- [LLD Coding](http://lldcoding.com)
+**Configuration:**
+- `maxTokens`: Maximum number of tokens in the bucket
+- `refillRate`: Number of tokens added per second
+
+#### Sliding Window Log Algorithm (`SlidingWindowLogRateLimiter`)
+**How it works:**
+- Maintains a log of timestamps for each request
+- When a new request arrives, removes all timestamps outside the time window
+- Allows the request if the number of timestamps is below the limit
+
+**Use cases:**
+- Precise rate limiting without edge cases
+- When accuracy is more important than memory efficiency
+
+**Configuration:**
+- `maxRequests`: Maximum number of requests allowed
+- `windowSizeInSeconds`: Time window in seconds
+
+#### Fixed Window Counter Algorithm (`FixedWindowCounterRateLimiter`)
+**How it works:**
+- Time is divided into fixed windows
+- Counts requests in each window
+- Resets counter when entering a new window
+
+**Use cases:**
+- Simple rate limiting with low memory overhead
+- When approximate rate limiting is acceptable
+
+**Configuration:**
+- `maxRequests`: Maximum requests per window
+- `windowSizeInSeconds`: Duration of each window
+
+**Note:** May allow bursts at window boundaries (e.g., max requests at end of one window + max at start of next)
+
+#### Leaky Bucket Algorithm (`LeakyBucketRateLimiter`)
+**How it works:**
+- Requests are added to a bucket with fixed capacity
+- Requests "leak" out at a constant rate
+- If bucket is full, new requests are denied
+
+**Use cases:**
+- Smoothing out bursty traffic
+- Enforcing a steady output rate
+
+**Configuration:**
+- `capacity`: Maximum number of requests the bucket can hold
+- `leakRate`: Number of requests that leak per second
+
+## Class Diagram
+
+```
+┌─────────────────┐
+│  RateLimiter    │ (Interface)
+│  <<interface>>  │
+├─────────────────┤
+│ + allowRequest()│
+└────────┬────────┘
+         │
+         │ implements
+         │
+    ┌────┴────────────────────────────────────────┐
+    │                                              │
+┌───┴──────────────────┐              ┌───────────┴──────────────┐
+│ TokenBucketRate      │              │ SlidingWindowLog         │
+│ Limiter              │              │ RateLimiter              │
+├──────────────────────┤              ├──────────────────────────┤
+│ - maxTokens          │              │ - maxRequests            │
+│ - refillRate         │              │ - windowSizeInMillis     │
+│ - userBuckets        │              │ - userRequestLogs        │
+├──────────────────────┤              ├──────────────────────────┤
+│ + allowRequest()     │              │ + allowRequest()         │
+│ - refillBucket()     │              └──────────────────────────┘
+└──────────────────────┘
+         │                                         │
+         │                                         │
+┌────────┴──────────────┐              ┌──────────┴───────────────┐
+│ FixedWindowCounter    │              │ LeakyBucketRate          │
+│ RateLimiter           │              │ Limiter                  │
+├───────────────────────┤              ├──────────────────────────┤
+│ - maxRequests         │              │ - capacity               │
+│ - windowSizeInMillis  │              │ - leakRate               │
+│ - userCounters        │              │ - userBuckets            │
+├───────────────────────┤              ├──────────────────────────┤
+│ + allowRequest()      │              │ + allowRequest()         │
+└───────────────────────┘              │ - leak()                 │
+                                       └──────────────────────────┘
+```
+
+## Usage Example
+
+```java
+// Token Bucket: Allow 10 requests initially, refill 2 per second
+RateLimiter tokenBucket = new TokenBucketRateLimiter(10, 2);
+boolean allowed = tokenBucket.allowRequest("user123");
+
+// Sliding Window Log: Allow 100 requests per 60 seconds
+RateLimiter slidingWindow = new SlidingWindowLogRateLimiter(100, 60);
+boolean allowed = slidingWindow.allowRequest("user456");
+
+// Fixed Window Counter: Allow 50 requests per 30 seconds
+RateLimiter fixedWindow = new FixedWindowCounterRateLimiter(50, 30);
+boolean allowed = fixedWindow.allowRequest("user789");
+
+// Leaky Bucket: Capacity of 20, leak 5 per second
+RateLimiter leakyBucket = new LeakyBucketRateLimiter(20, 5);
+boolean allowed = leakyBucket.allowRequest("user101");
+```
+
+## Algorithm Comparison
+
+| Algorithm | Memory Usage | Accuracy | Burst Handling | Complexity |
+|-----------|-------------|----------|----------------|------------|
+| Token Bucket | Low | Good | Excellent | O(1) |
+| Sliding Window Log | High | Excellent | Good | O(n) |
+| Fixed Window Counter | Low | Fair | Poor | O(1) |
+| Leaky Bucket | Low | Good | Fair | O(1) |
+
+## Thread Safety
+All implementations use `ConcurrentHashMap` for thread-safe operations and synchronized methods to ensure consistency in multi-threaded environments.
+
+## Running the Demo
+```java
+RateLimiterDemo.run();
+```
+
+The demo showcases all four algorithms with different configurations and request patterns.
+
+## Design Patterns Used
+- **Strategy Pattern**: Different rate limiting algorithms implement the same interface
+- **Factory Pattern**: Can be extended to create rate limiters based on configuration
+- **Singleton Pattern**: Can be applied to create single instances per configuration
+
+## Future Enhancements
+- Distributed rate limiting using Redis
+- Sliding window counter (hybrid approach)
+- Rate limiting with multiple tiers
+- Metrics and monitoring integration
+- Configuration-based rate limiter factory
