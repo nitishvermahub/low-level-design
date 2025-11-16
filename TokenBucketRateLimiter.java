@@ -6,9 +6,9 @@ import java.util.concurrent.ConcurrentHashMap;
 // Token Bucket Algorithm Implementation
 // Tokens are added at a fixed rate and consumed per request
 public class TokenBucketRateLimiter implements RateLimiter {
+    private final Map<String, UserBucket> userBuckets;
     private final int maxTokens;
     private final int refillRate; // tokens per second
-    private final Map<String, UserBucket> userBuckets;
 
     public TokenBucketRateLimiter(int maxTokens, int refillRate) {
         this.maxTokens = maxTokens;

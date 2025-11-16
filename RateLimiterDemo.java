@@ -27,7 +27,8 @@ public class RateLimiterDemo {
     }
     
     private static void demoTokenBucket() {
-        RateLimiter rateLimiter = new TokenBucketRateLimiter(5, 2);
+        RateLimiterFactory factory = RateLimiterFactory.getInstance();
+        RateLimiter rateLimiter = factory.createRateLimiter(RateLimiterType.TOKEN_BUCKET, 5, 2);
         String userId = "user1";
         
         // Make 7 requests rapidly
@@ -48,7 +49,8 @@ public class RateLimiterDemo {
     }
     
     private static void demoSlidingWindowLog() {
-        RateLimiter rateLimiter = new SlidingWindowLogRateLimiter(3, 5);
+        RateLimiterFactory factory = RateLimiterFactory.getInstance();
+        RateLimiter rateLimiter = factory.createRateLimiter(RateLimiterType.SLIDING_WINDOW_LOG, 3, 5);
         String userId = "user2";
         
         // Make 5 requests
@@ -59,7 +61,8 @@ public class RateLimiterDemo {
     }
     
     private static void demoFixedWindowCounter() {
-        RateLimiter rateLimiter = new FixedWindowCounterRateLimiter(4, 10);
+        RateLimiterFactory factory = RateLimiterFactory.getInstance();
+        RateLimiter rateLimiter = factory.createRateLimiter(RateLimiterType.FIXED_WINDOW, 4, 10);
         String userId = "user3";
         
         // Make 6 requests
@@ -70,7 +73,8 @@ public class RateLimiterDemo {
     }
     
     private static void demoLeakyBucket() {
-        RateLimiter rateLimiter = new LeakyBucketRateLimiter(3, 1);
+        RateLimiterFactory factory = RateLimiterFactory.getInstance();
+        RateLimiter rateLimiter = factory.createRateLimiter(RateLimiterType.LEAKY_BUCKET, 3, 1);
         String userId = "user4";
         
         // Make 5 requests rapidly
